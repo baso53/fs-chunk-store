@@ -9,6 +9,7 @@ var raf = require('random-access-file')
 var randombytes = require('randombytes')
 var rimraf = require('rimraf')
 var thunky = require('thunky')
+const mkdirp = require('mkdirp')
 
 var TMP
 try {
@@ -62,7 +63,7 @@ function Storage (chunkLength, opts) {
   self.files.forEach(function (file) {
     file.open = thunky(function (cb) {
       if (self.closed) return cb(new Error('Storage is closed'))
-      fs.mkdir(path.dirname(file.path), { recursive: true }, function (err) {
+      mkdirp(path.dirname(file.path), { recursive: true }, function (err) {
         if (err) return cb(err)
         if (self.closed) return cb(new Error('Storage is closed'))
         cb(null, raf(file.path))
